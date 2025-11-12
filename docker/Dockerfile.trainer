@@ -1,0 +1,9 @@
+FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
+ARG PY= 3.11
+RUN apt-get update && apt-get install -y --no-install-recommends python${PY} python3-pip git ffmpeg xvfb libgl1-mesa-glx libglib2.0-0 && rm -rf /var/lib/apt/lists/*
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python${PY} 1
+
+WORKDIR /app
+COPY trainer/ ./trainer/
+COPY proto/ ./proto/
+ENV PYTHONPATH=/app

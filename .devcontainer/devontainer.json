@@ -1,0 +1,8 @@
+{
+    "name": "Neurogenesis",
+    "dockerComposeFile": "docker/compose.yaml",
+    "service": "trainer",
+    "workspaceFolder": "/workspaces/neurogenesis",
+    "features": {"ghcr.io/devcontainers/features/common-utils:2": {}},
+    "remoteEnv": {"PYTHONPATH": "/workspaces/neurogenesis"}
+}
