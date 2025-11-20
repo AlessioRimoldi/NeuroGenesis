@@ -1,0 +1,6 @@
+gymnasium==1.0.0
+protobuf>=4.25.0
+grpcio>=1.64.0
+grpcio-tools>=1.64.0
+numpy>=1.26
+msgpack>=1.08
