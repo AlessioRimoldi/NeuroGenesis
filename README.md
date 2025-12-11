@@ -3,7 +3,7 @@ An implementation of the contents and ideas from the book "A Brief history of In
 Think of Neurogenesis as a brain simulator that learns inside video-game worlds.
 
 We want to :
-- try different algorithms ("the five breakthroughs")
+- Try different algorithms ("the five breakthroughs")
 - Try different games (Unity, Godot, Gym, etc.)
 
 The architecture is built like LEGO blocks, every piece can be swapped.
