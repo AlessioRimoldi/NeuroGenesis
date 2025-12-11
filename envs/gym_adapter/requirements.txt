@@ -1,6 +1,16 @@
-gymnasium==1.0.0
-protobuf>=4.25.0
+gymnasium>=1.0.0
+pettingzoo>=1.24.0
+
+numpy>=1.26.0
+
 grpcio>=1.64.0
-grpcio-tools>=1.64.0
-numpy>=1.26
-msgpack>=1.08
+protobuf>=4.25.0
+
+msgpack>=1.0.8
+
+# Dev tools (optional)
+pytest>=8.0.0
+pytest-cov>=5.0.0
+mypy>=1.11.0
+ruff>=0.5.0
+black>=24.0.0
