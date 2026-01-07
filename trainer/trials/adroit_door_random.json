@@ -1,0 +1,11 @@
+{
+  "task": "gym:AdroitHandDoor-v1",
+  "seed": 0,
+  "episodes": 5,
+  "max_steps": 200,
+  "experiment": "neurogenesis",
+  "run_name": "adroit_door_random",
+  "algo": "random",
+  "algo_kwargs": {},
+  "action": { "kind": "box", "shape": [28], "low": -1.0, "high": 1.0, "dtype": "float32" }
+}

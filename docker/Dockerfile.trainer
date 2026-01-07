@@ -10,6 +10,7 @@ WORKDIR /trainer
 COPY trainer/requirements.txt /trainer/requirements.txt
 RUN pip install --upgrade pip && pip install -r ./requirements.txt
 COPY trainer/ ./trainer/
+RUN sed -i 's/^import env_pb2 as /from trainer import env_pb2 as /' trainer/env_pb2_grpc.py
 COPY proto/ ./proto/
 
 ENV PYTHONPATH=/trainer

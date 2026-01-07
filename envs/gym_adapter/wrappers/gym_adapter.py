@@ -1,6 +1,12 @@
 from typing import Optional
 import gymnasium as gym
 
+try: 
+    import gymnasium_robotics
+    gym.register_envs(gymnasium_robotics)
+except Exception:
+    pass
+
 from .base import BaseAdapter
 
 

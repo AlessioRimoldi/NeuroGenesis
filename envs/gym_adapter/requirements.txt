@@ -1,6 +1,8 @@
 gymnasium>=1.0.0
 gymnasium[classic-control]
 pettingzoo>=1.24.0
+gymnasium-robotics>=1.4.2
+mujoco>=3.4.0
 
 numpy>=1.26.0
 

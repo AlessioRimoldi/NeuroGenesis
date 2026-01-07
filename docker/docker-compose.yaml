@@ -1,0 +1,42 @@
+version: "3.9"
+services:
+  registry:
+    image: ghcr.io/mlflow/mlflow:v2.16.0
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:////mlruns/mlflow.db --default-artifact-root /mlruns
+    volumes: ["./mlruns:/mlruns"]
+    ports: ["5000:5000"]
+
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+
+  env:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.env.gym
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      - DISPLAY=$DISPLAY
+      - XSDG_RUNTIME_DIR=/tmp/runtime-root
+      - SDL_AUDIODRIVER=dummy
+    command: python server.py --task gym:CartPole-v1 --port 50051
+    ports: ["50051:50051"]
+  
+  trainer:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.trainer
+    environment:
+      - ENV_ADDR=env:50051
+      - MLFLOW_TRACKING_URI=http://registry:5000
+      - ML
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - env
+      - registry
+      - redis
+    command: python -m trainer.main --spec trainer/trials/cartpole_random.json
+  
+
+

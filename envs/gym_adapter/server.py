@@ -35,8 +35,8 @@ def space_to_spec(space):
 
 
 class EnvServicer(env_pb2_grpc.EnvServicer):
-    def __init__(self, env_id: str):
-        self._env = GymAdapter(env_id)
+    def __init__(self, env_id: str, render: bool):
+        self._env = GymAdapter(env_id, render_mode="human" if render else None)
 
     def Reset(self, request, context):
         obs = self._env.reset()
@@ -67,9 +67,9 @@ class EnvServicer(env_pb2_grpc.EnvServicer):
         )
 
 
-def serve(env_id: str, port: int):
+def serve(env_id: str, port: int, render: bool):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=4))
-    env_pb2_grpc.add_EnvServicer_to_server(EnvServicer(env_id), server)
+    env_pb2_grpc.add_EnvServicer_to_server(EnvServicer(env_id, render), server)
     server.add_insecure_port(f"[::]:{port}")
     server.start()
     server.wait_for_termination()
@@ -78,7 +78,8 @@ def serve(env_id: str, port: int):
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--task", type=str, default="gym:CartPole-v1")
+    p.add_argument("--render", action="store_true")
     p.add_argument("--port", type=int, default=50051)
     args = p.parse_args()
     _, env_id = args.task.split(":", 1)
-    serve(env_id, args.port)
+    serve(env_id, args.port, args.render)
