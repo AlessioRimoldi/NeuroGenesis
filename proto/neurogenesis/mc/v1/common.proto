@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package neurogenesis.mc.v1;
+
+option java_package = "neurogenesis.mc.proto.v1";
+option java_multiple_files = true;
+
+message Vec3d {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message Vec3i {
+  int32 x = 1;
+  int32 y = 2;
+  int32 z = 3;
+}
+
+// An item stack by registry name, optionally placed in a given inventory slot.
+message ItemStack {
+  string id = 1;     // e.g. "minecraft:bread"
+  int32 count = 2;
+  int32 slot = 3;    // player inventory index (0-35 main, 36-39 armor, 40 offhand); -1 = first free
+}

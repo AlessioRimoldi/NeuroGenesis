@@ -1,0 +1,26 @@
+{
+	"schemaVersion": 1,
+	"id": "neurogenesis",
+	"version": "${version}",
+	"name": "NeuroGenesis",
+	"description": "Lockstep RL control of server-side agents: MineRL-style actions, custom senses, seeded arenas.",
+	"authors": ["NeuroGenesis contributors"],
+	"environment": "*",
+	"entrypoints": {
+		"main": ["neurogenesis.mc.NeuroGenesisMod"],
+		"client": ["neurogenesis.mc.client.NeuroGenesisClient"]
+	},
+	"mixins": [
+		"neurogenesis.mixins.json",
+		{
+			"config": "neurogenesis.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.20.1",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

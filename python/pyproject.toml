@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neurogenesis"
+version = "0.1.0"
+description = "Python side of NeuroGenesis: lockstep control of server-side Minecraft agents."
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+    # Must match the protoc used to generate neurogenesis/mc/v1 (mod/gradle.properties: protobuf_version=4.36.2).
+    "protobuf>=7.36.2,<8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"neurogenesis.mc.v1" = ["*.pyi"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "server: needs a running NeuroGenesis server (make up, or ./gradlew runServer)",
+]
+addopts = "-m 'not server'"

@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package neurogenesis.mc.v1;
+
+import "neurogenesis/mc/v1/common.proto";
+
+option java_package = "neurogenesis.mc.proto.v1";
+option java_multiple_files = true;
+
+// Full server-side state of one agent at the end of a step. Python decides
+// which parts each agent may perceive (sensor configuration is a Python concern).
+message AgentObs {
+  uint32 agent_id = 1;
+  string name = 2;
+  bool alive = 3;
+  bool terminated = 4;          // died (and not respawning)
+  bool truncated = 5;           // episode tick limit reached
+
+  // Body.
+  Vec3d pos = 6;                // feet position
+  Vec3d vel = 7;                // blocks per tick
+  float yaw = 8;
+  float pitch = 9;
+  bool on_ground = 10;
+  bool in_water = 11;
+  bool crouching = 12;
+  bool sprinting = 13;
+  bool using_item = 14;
+  float health = 15;
+  int32 food = 16;
+  float saturation = 17;
+  int32 air = 18;
+
+  // Inventory: 41 slots (0-35 main with 0-8 hotbar, 36-39 armor, 40 offhand), registry ids (0 = air).
+  repeated int32 inv_item = 19 [packed = true];
+  repeated int32 inv_count = 20 [packed = true];
+  int32 selected_slot = 21;     // 0-8
+
+  ContainerView container = 22; // currently open menu (inventory screen counts as open)
+  Crosshair crosshair = 23;
+  Smell smell = 24;
+  repeated Event events = 25;   // things that happened during this step
+}
+
+message ContainerView {
+  bool open = 1;
+  int32 menu_type = 2;          // menu registry id, -1 = player inventory screen
+  repeated int32 slot_item = 3 [packed = true];
+  repeated int32 slot_count = 4 [packed = true];
+  int32 carried_item = 5;       // item on the cursor
+  int32 carried_count = 6;
+}
+
+message Crosshair {
+  enum Type {
+    MISS = 0;
+    BLOCK = 1;
+    ENTITY = 2;
+  }
+  Type type = 1;
+  int32 block_id = 2;           // block registry id
+  Vec3i block_pos = 3;
+  int32 face = 4;               // Direction ordinal
+  int32 entity_type = 5;        // entity type registry id
+  int32 entity_id = 6;
+  float distance = 7;
+}
+
+message Smell {
+  float left = 1;
+  float right = 2;
+}
+
+message Event {
+  enum Type {
+    UNKNOWN = 0;
+    DAMAGE = 1;        // amount = damage taken
+    DEATH = 2;
+    CONSUMED = 3;      // item_id eaten/drunk
+    PICKED_UP = 4;     // item_id, amount = count
+    BLOCK_BROKEN = 5;  // item_id = block registry id
+    CRAFTED = 6;       // item_id, amount = count
+    ATTACKED = 7;      // amount = damage dealt, item_id = target entity type
+  }
+  Type type = 1;
+  int32 item_id = 2;
+  float amount = 3;
+}

@@ -1,0 +1,17 @@
+pluginManagement {
+	repositories {
+		maven {
+			name = 'Fabric'
+			url = 'https://maven.fabricmc.net/'
+		}
+		mavenCentral()
+		gradlePluginPortal()
+	}
+}
+
+plugins {
+	// Lets Gradle download the JDK 25 required by Minecraft 26.x (host may only have JDK 21).
+	id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+rootProject.name = 'neurogenesis'

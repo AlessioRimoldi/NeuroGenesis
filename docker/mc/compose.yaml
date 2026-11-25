@@ -1,0 +1,49 @@
+# NeuroGenesis dedicated server: Fabric 26.3 + Fabric API + the NeuroGenesis mod (mounted from mod/build/dist).
+# Start with `make up` (builds the mod first). Ports are bound to localhost only.
+name: neurogenesis
+
+services:
+  mc:
+    image: itzg/minecraft-server:2026.11.1-java25
+    container_name: neurogenesis-mc
+    stop_grace_period: 60s
+    environment:
+      # Setting EULA=TRUE means you accept Mojang's EULA: https://aka.ms/MinecraftEULA
+      EULA: "TRUE"
+      TYPE: FABRIC
+      VERSION: "26.3"
+      FABRIC_LOADER_VERSION: "0.20.1"
+      # Fabric API 0.166.2+26.3 (Modrinth version id); keep in sync with mod/gradle.properties.
+      MODRINTH_PROJECTS: "fabric-api:Zns5SSRA"
+      REMOVE_OLD_MODS: "TRUE"
+      MEMORY: ${NG_MEMORY:-3G}
+      # Offline mode: agents and local debug clients join without Microsoft authentication.
+      ONLINE_MODE: "FALSE"
+      ENFORCE_SECURE_PROFILE: "FALSE"
+      # Lockstep pauses the server between ticks: disable the watchdog and empty-server pausing.
+      MAX_TICK_TIME: "-1"
+      PAUSE_WHEN_EMPTY_SECONDS: "0"
+      # A void world; the mod builds the arena at the origin.
+      LEVEL_TYPE: FLAT
+      GENERATOR_SETTINGS: '{"layers":[{"block":"minecraft:air","height":1}],"biome":"minecraft:the_void"}'
+      GENERATE_STRUCTURES: "FALSE"
+      SPAWN_PROTECTION: "0"
+      DIFFICULTY: normal
+      MODE: spectator          # humans who join to watch
+      MAX_PLAYERS: "80"        # agents count as players
+      VIEW_DISTANCE: "6"
+      SIMULATION_DISTANCE: "4"
+      SYNC_CHUNK_WRITES: "FALSE"
+      ENABLE_RCON: "TRUE"
+      RCON_PASSWORD: ${NG_RCON_PASSWORD:-neurogenesis}
+      NG_CONTROL_PORT: "25570"
+    ports:
+      - "127.0.0.1:${NG_GAME_PORT:-25565}:25565"       # join with a vanilla 26.3 client to watch
+      - "127.0.0.1:${NG_CONTROL_PORT:-25570}:25570"    # Python lockstep control
+      - "127.0.0.1:${NG_RCON_PORT:-25575}:25575"       # RCON (debugging)
+    volumes:
+      - ../../mod/build/dist:/mods:ro
+      - data:/data
+
+volumes:
+  data:

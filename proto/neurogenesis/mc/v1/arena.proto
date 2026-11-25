@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package neurogenesis.mc.v1;
+
+import "neurogenesis/mc/v1/common.proto";
+
+option java_package = "neurogenesis.mc.proto.v1";
+option java_multiple_files = true;
+
+// A rectangular walled arena built at a fixed origin on reset.
+message ArenaConfig {
+  int32 size_x = 1;            // inner width in blocks (default 32)
+  int32 size_z = 2;            // inner depth in blocks (default 32)
+  int32 wall_height = 3;       // default 3
+  string floor_block = 4;      // default "minecraft:grass_block"
+  string wall_block = 5;       // default "minecraft:stone_bricks"
+  FoodConfig food = 6;
+  SmellConfig smell = 7;
+}
+
+message FoodConfig {
+  enum Kind {
+    KIND_ITEM = 0;    // dropped item entities (picked up by walking over them)
+    KIND_BLOCK = 1;   // blocks (e.g. "minecraft:sweet_berry_bush")
+  }
+  Kind kind = 1;
+  string id = 2;               // default "minecraft:apple"
+  uint32 count = 3;            // number of food sources present at reset
+  float min_dist = 4;          // minimum distance from any agent spawn
+  bool respawn = 5;            // replace eaten/picked food elsewhere
+  uint32 respawn_delay = 6;    // ticks
+}
+
+// Diffusing "smell" emitted by food sources; see sense/SmellField.
+message SmellConfig {
+  bool enabled = 1;
+  float cell_size = 2;         // blocks per grid cell (default 1)
+  float diffusion = 3;         // blocks^2 per tick (default 0.2)
+  float decay = 4;             // fraction lost per tick (default 0.01)
+  float emission = 5;          // units per tick per source (default 1)
+  uint32 prewarm_ticks = 6;    // field steps simulated on reset (default 400)
+  float antenna_lateral = 7;   // antenna offset left/right of the eye (default 0.3)
+  float antenna_forward = 8;   // antenna offset in front of the eye (default 0.3)
+}
+
+enum GameMode {
+  GAME_MODE_SURVIVAL = 0;
+  GAME_MODE_ADVENTURE = 1;
+  GAME_MODE_CREATIVE = 2;
+  GAME_MODE_SPECTATOR = 3;
+}
+
+message AgentConfig {
+  string name = 1;                 // unique, <= 16 chars, [A-Za-z0-9_]
+  optional Vec3d spawn_pos = 2;    // default: random free spot in the arena
+  optional float spawn_yaw = 3;    // default: random
+  GameMode game_mode = 4;
+  optional float health = 5;       // default 20
+  optional int32 food = 6;         // default 20
+  repeated ItemStack inventory = 7;
+  bool respawn_on_death = 8;       // false: death is terminal until the next reset
+}

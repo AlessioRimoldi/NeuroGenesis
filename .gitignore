@@ -1,0 +1,27 @@
+# Gradle / Fabric
+mod/.gradle/
+mod/build/
+mod/run/
+mod/out/
+.kotlin/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+build/
+dist/
+
+# IDEs / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Logs and crash reports
+*.log
+hs_err_*.log
+crash-reports/

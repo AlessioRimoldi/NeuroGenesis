@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package neurogenesis.mc.v1;
+
+import "neurogenesis/mc/v1/action.proto";
+import "neurogenesis/mc/v1/arena.proto";
+import "neurogenesis/mc/v1/observation.proto";
+
+option java_package = "neurogenesis.mc.proto.v1";
+option java_multiple_files = true;
+
+// Wire format: each message is a 4-byte big-endian length followed by the
+// serialized Request (client -> server) or Response (server -> client).
+// Strictly one Response per Request, in order.
+
+message Request {
+  uint64 request_id = 1;
+  oneof body {
+    Hello hello = 2;
+    Reset reset = 3;
+    Step step = 4;
+    Close close = 5;
+  }
+}
+
+message Response {
+  uint64 request_id = 1;
+  oneof body {
+    Spec spec = 2;
+    StepResult step_result = 3;
+    Error error = 4;
+    Closed closed = 5;
+  }
+}
+
+message Hello {
+  uint32 protocol_version = 1;
+  string client_name = 2;
+}
+
+message Spec {
+  uint32 protocol_version = 1;
+  string minecraft_version = 2;
+  string mod_version = 3;
+  int64 server_tick = 4;
+  uint32 max_agents = 5;
+  // Registry vocabularies: index = registry id used in observations.
+  repeated string item_vocab = 6;
+  repeated string block_vocab = 7;
+  repeated string entity_vocab = 8;
+  repeated string menu_vocab = 9;
+}
+
+message Reset {
+  uint64 seed = 1;
+  ArenaConfig arena = 2;
+  repeated AgentConfig agents = 3;
+  uint32 settle_ticks = 4;       // ticks simulated after setup before the first observation (default 5)
+  uint32 max_episode_ticks = 5;  // 0 = unlimited
+}
+
+message Step {
+  uint32 ticks = 1;              // game ticks to simulate (>= 1)
+  repeated AgentAction actions = 2;  // agents without an entry release all keys
+}
+
+message StepResult {
+  int64 tick = 1;                // server tick counter after the step
+  uint32 episode_tick = 2;
+  repeated AgentObs obs = 3;
+  uint64 server_step_us = 4;     // wall time spent on the server for this request
+}
+
+message Close {}
+message Closed {}
+
+message Error {
+  enum Code {
+    UNKNOWN = 0;
+    BAD_REQUEST = 1;
+    NOT_READY = 2;           // e.g. Step before Reset
+    PROTOCOL_MISMATCH = 3;
+    INTERNAL = 4;
+  }
+  Code code = 1;
+  string message = 2;
+}

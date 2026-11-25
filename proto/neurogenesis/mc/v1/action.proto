@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package neurogenesis.mc.v1;
+
+option java_package = "neurogenesis.mc.proto.v1";
+option java_multiple_files = true;
+
+// One agent's input for one Step. Keys are "held" for every tick of the step;
+// the remaining fields are one-shot and applied on the first tick only.
+message AgentAction {
+  uint32 agent_id = 1;
+
+  // Held keys (MineRL-style).
+  bool forward = 2;
+  bool back = 3;
+  bool left = 4;
+  bool right = 5;
+  bool jump = 6;
+  bool sneak = 7;
+  bool sprint = 8;
+  bool attack = 9;
+  bool use = 10;
+
+  // One-shot.
+  float camera_dyaw = 11;      // degrees, positive = turn right
+  float camera_dpitch = 12;    // degrees, positive = look down
+  uint32 hotbar = 13;          // 0 = no change, 1-9 = select slot
+  bool drop = 14;              // drop one item of the selected stack
+  bool drop_stack = 15;
+  bool swap_hands = 16;
+  InventoryAction inventory = 17;
+  repeated ClickSlot clicks = 18;
+}
+
+enum InventoryAction {
+  INVENTORY_NONE = 0;
+  INVENTORY_OPEN = 1;
+  INVENTORY_CLOSE = 2;   // closes whatever container is open
+  INVENTORY_TOGGLE = 3;
+}
+
+// A click in the open container screen (player inventory or e.g. crafting table),
+// mirroring vanilla's ContainerInput click types.
+message ClickSlot {
+  int32 slot = 1;       // menu slot index; -999 = click outside (drop carried)
+  int32 button = 2;     // 0 = left, 1 = right (meaning depends on mode)
+  ClickMode mode = 3;
+}
+
+enum ClickMode {
+  CLICK_PICKUP = 0;
+  CLICK_QUICK_MOVE = 1;
+  CLICK_SWAP = 2;
+  CLICK_CLONE = 3;
+  CLICK_THROW = 4;
+  CLICK_QUICK_CRAFT = 5;
+  CLICK_PICKUP_ALL = 6;
+}

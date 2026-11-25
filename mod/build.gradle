@@ -1,0 +1,112 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'com.google.protobuf' version "${protobuf_plugin_version}"
+}
+
+base {
+	archivesName = 'neurogenesis'
+}
+
+repositories {
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = 'Modrinth'
+				url = 'https://api.modrinth.com/maven'
+			}
+		}
+		filter {
+			includeGroup 'maven.modrinth'
+		}
+	}
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"neurogenesis" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+
+	runs {
+		server {
+			runDir 'run/server'
+			programArg '--nogui'
+		}
+		client {
+			runDir 'run/client'
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// Protocol messages (shared schema in ../proto); bundled into the mod jar (jar-in-jar).
+	implementation "com.google.protobuf:protobuf-java:${project.protobuf_version}"
+	include "com.google.protobuf:protobuf-java:${project.protobuf_version}"
+
+	testImplementation platform("org.junit:junit-bom:${project.junit_version}")
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	if (project.hasProperty('withCarpet')) {
+		runtimeOnly "maven.modrinth:carpet:${project.carpet_version}"
+	}
+}
+
+sourceSets {
+	main {
+		proto {
+			srcDir '../proto'
+		}
+	}
+}
+
+protobuf {
+	protoc {
+		artifact = "com.google.protobuf:protoc:${project.protobuf_version}"
+	}
+}
+
+processResources {
+	def version = project.version
+	inputs.property 'version', version
+
+	filesMatching('fabric.mod.json') {
+		expand 'version': version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
+
+jar {
+	from(rootProject.file('THIRD_PARTY_NOTICES')) {
+		rename { "${it}_neurogenesis" }
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
+
+// build/dist holds only the mod jar; the Docker server mounts this directory as its mods source.
+tasks.register('dist', Sync) {
+	from(tasks.named('jar'))
+	into(layout.buildDirectory.dir('dist'))
+}
+tasks.named('build') {
+	dependsOn 'dist'
+}
