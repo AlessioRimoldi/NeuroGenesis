@@ -27,7 +27,7 @@ from neurogenesis.mc.v1 import arena_pb2 as neurogenesis_dot_mc_dot_v1_dot_arena
 from neurogenesis.mc.v1 import observation_pb2 as neurogenesis_dot_mc_dot_v1_dot_observation__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n neurogenesis/mc/v1/control.proto\x12\x12neurogenesis.mc.v1\x1a\x1fneurogenesis/mc/v1/action.proto\x1a\x1eneurogenesis/mc/v1/arena.proto\x1a$neurogenesis/mc/v1/observation.proto\"\xd3\x01\n\x07Request\x12\x12\n\nrequest_id\x18\x01 \x01(\x04\x12*\n\x05hello\x18\x02 \x01(\x0b\x32\x19.neurogenesis.mc.v1.HelloH\x00\x12*\n\x05reset\x18\x03 \x01(\x0b\x32\x19.neurogenesis.mc.v1.ResetH\x00\x12(\n\x04step\x18\x04 \x01(\x0b\x32\x18.neurogenesis.mc.v1.StepH\x00\x12*\n\x05\x63lose\x18\x05 \x01(\x0b\x32\x19.neurogenesis.mc.v1.CloseH\x00\x42\x06\n\x04\x62ody\"\xe1\x01\n\x08Response\x12\x12\n\nrequest_id\x18\x01 \x01(\x04\x12(\n\x04spec\x18\x02 \x01(\x0b\x32\x18.neurogenesis.mc.v1.SpecH\x00\x12\x35\n\x0bstep_result\x18\x03 \x01(\x0b\x32\x1e.neurogenesis.mc.v1.StepResultH\x00\x12*\n\x05\x65rror\x18\x04 \x01(\x0b\x32\x19.neurogenesis.mc.v1.ErrorH\x00\x12,\n\x06\x63losed\x18\x05 \x01(\x0b\x32\x1a.neurogenesis.mc.v1.ClosedH\x00\x42\x06\n\x04\x62ody\"6\n\x05Hello\x12\x18\n\x10protocol_version\x18\x01 \x01(\r\x12\x13\n\x0b\x63lient_name\x18\x02 \x01(\t\"\xcc\x01\n\x04Spec\x12\x18\n\x10protocol_version\x18\x01 \x01(\r\x12\x19\n\x11minecraft_version\x18\x02 \x01(\t\x12\x13\n\x0bmod_version\x18\x03 \x01(\t\x12\x13\n\x0bserver_tick\x18\x04 \x01(\x03\x12\x12\n\nmax_agents\x18\x05 \x01(\r\x12\x12\n\nitem_vocab\x18\x06 \x03(\t\x12\x13\n\x0b\x62lock_vocab\x18\x07 \x03(\t\x12\x14\n\x0c\x65ntity_vocab\x18\x08 \x03(\t\x12\x12\n\nmenu_vocab\x18\t \x03(\t\"\xa7\x01\n\x05Reset\x12\x0c\n\x04seed\x18\x01 \x01(\x04\x12.\n\x05\x61rena\x18\x02 \x01(\x0b\x32\x1f.neurogenesis.mc.v1.ArenaConfig\x12/\n\x06\x61gents\x18\x03 \x03(\x0b\x32\x1f.neurogenesis.mc.v1.AgentConfig\x12\x14\n\x0csettle_ticks\x18\x04 \x01(\r\x12\x19\n\x11max_episode_ticks\x18\x05 \x01(\r\"G\n\x04Step\x12\r\n\x05ticks\x18\x01 \x01(\r\x12\x30\n\x07\x61\x63tions\x18\x02 \x03(\x0b\x32\x1f.neurogenesis.mc.v1.AgentAction\"s\n\nStepResult\x12\x0c\n\x04tick\x18\x01 \x01(\x03\x12\x14\n\x0c\x65pisode_tick\x18\x02 \x01(\r\x12)\n\x03obs\x18\x03 \x03(\x0b\x32\x1c.neurogenesis.mc.v1.AgentObs\x12\x16\n\x0eserver_step_us\x18\x04 \x01(\x04\"\x07\n\x05\x43lose\"\x08\n\x06\x43losed\"\xa0\x01\n\x05\x45rror\x12,\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1e.neurogenesis.mc.v1.Error.Code\x12\x0f\n\x07message\x18\x02 \x01(\t\"X\n\x04\x43ode\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0f\n\x0b\x42\x41\x44_REQUEST\x10\x01\x12\r\n\tNOT_READY\x10\x02\x12\x15\n\x11PROTOCOL_MISMATCH\x10\x03\x12\x0c\n\x08INTERNAL\x10\x04\x42\x1c\n\x18neurogenesis.mc.proto.v1P\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n neurogenesis/mc/v1/control.proto\x12\x12neurogenesis.mc.v1\x1a\x1fneurogenesis/mc/v1/action.proto\x1a\x1eneurogenesis/mc/v1/arena.proto\x1a$neurogenesis/mc/v1/observation.proto\"\xd3\x01\n\x07Request\x12\x12\n\nrequest_id\x18\x01 \x01(\x04\x12*\n\x05hello\x18\x02 \x01(\x0b\x32\x19.neurogenesis.mc.v1.HelloH\x00\x12*\n\x05reset\x18\x03 \x01(\x0b\x32\x19.neurogenesis.mc.v1.ResetH\x00\x12(\n\x04step\x18\x04 \x01(\x0b\x32\x18.neurogenesis.mc.v1.StepH\x00\x12*\n\x05\x63lose\x18\x05 \x01(\x0b\x32\x19.neurogenesis.mc.v1.CloseH\x00\x42\x06\n\x04\x62ody\"\xe1\x01\n\x08Response\x12\x12\n\nrequest_id\x18\x01 \x01(\x04\x12(\n\x04spec\x18\x02 \x01(\x0b\x32\x18.neurogenesis.mc.v1.SpecH\x00\x12\x35\n\x0bstep_result\x18\x03 \x01(\x0b\x32\x1e.neurogenesis.mc.v1.StepResultH\x00\x12*\n\x05\x65rror\x18\x04 \x01(\x0b\x32\x19.neurogenesis.mc.v1.ErrorH\x00\x12,\n\x06\x63losed\x18\x05 \x01(\x0b\x32\x1a.neurogenesis.mc.v1.ClosedH\x00\x42\x06\n\x04\x62ody\"6\n\x05Hello\x12\x18\n\x10protocol_version\x18\x01 \x01(\r\x12\x13\n\x0b\x63lient_name\x18\x02 \x01(\t\"\x82\x02\n\x04Spec\x12\x18\n\x10protocol_version\x18\x01 \x01(\r\x12\x19\n\x11minecraft_version\x18\x02 \x01(\t\x12\x13\n\x0bmod_version\x18\x03 \x01(\t\x12\x13\n\x0bserver_tick\x18\x04 \x01(\x03\x12\x12\n\nmax_agents\x18\x05 \x01(\r\x12\x12\n\nitem_vocab\x18\x06 \x03(\t\x12\x13\n\x0b\x62lock_vocab\x18\x07 \x03(\t\x12\x14\n\x0c\x65ntity_vocab\x18\x08 \x03(\t\x12\x12\n\nmenu_vocab\x18\t \x03(\t\x12\x34\n\x0crecipe_vocab\x18\n \x03(\x0b\x32\x1e.neurogenesis.mc.v1.RecipeInfo\"\x9f\x02\n\nRecipeInfo\x12\x12\n\ndisplay_id\x18\x01 \x01(\r\x12\x11\n\trecipe_id\x18\x02 \x01(\t\x12\x13\n\x0bresult_item\x18\x03 \x01(\x05\x12\x14\n\x0cresult_count\x18\x04 \x01(\x05\x12\x37\n\x07station\x18\x05 \x01(\x0e\x32&.neurogenesis.mc.v1.RecipeInfo.Station\x12\r\n\x05width\x18\x06 \x01(\x05\x12\x0e\n\x06height\x18\x07 \x01(\x05\"g\n\x07Station\x12\t\n\x05OTHER\x10\x00\x12\x11\n\rINVENTORY_2X2\x10\x01\x12\x12\n\x0e\x43RAFTING_TABLE\x10\x02\x12\x0b\n\x07\x46URNACE\x10\x03\x12\x11\n\rBLAST_FURNACE\x10\x04\x12\n\n\x06SMOKER\x10\x05\"\xd3\x01\n\x05Reset\x12\x0c\n\x04seed\x18\x01 \x01(\x04\x12.\n\x05\x61rena\x18\x02 \x01(\x0b\x32\x1f.neurogenesis.mc.v1.ArenaConfig\x12/\n\x06\x61gents\x18\x03 \x03(\x0b\x32\x1f.neurogenesis.mc.v1.AgentConfig\x12\x14\n\x0csettle_ticks\x18\x04 \x01(\r\x12\x19\n\x11max_episode_ticks\x18\x05 \x01(\r\x12*\n\x03obs\x18\x06 \x01(\x0b\x32\x1d.neurogenesis.mc.v1.ObsConfig\"\x1e\n\tObsConfig\x12\x11\n\tcraftable\x18\x01 \x01(\x08\"G\n\x04Step\x12\r\n\x05ticks\x18\x01 \x01(\r\x12\x30\n\x07\x61\x63tions\x18\x02 \x03(\x0b\x32\x1f.neurogenesis.mc.v1.AgentAction\"s\n\nStepResult\x12\x0c\n\x04tick\x18\x01 \x01(\x03\x12\x14\n\x0c\x65pisode_tick\x18\x02 \x01(\r\x12)\n\x03obs\x18\x03 \x03(\x0b\x32\x1c.neurogenesis.mc.v1.AgentObs\x12\x16\n\x0eserver_step_us\x18\x04 \x01(\x04\"\x07\n\x05\x43lose\"\x08\n\x06\x43losed\"\xa0\x01\n\x05\x45rror\x12,\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1e.neurogenesis.mc.v1.Error.Code\x12\x0f\n\x07message\x18\x02 \x01(\t\"X\n\x04\x43ode\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0f\n\x0b\x42\x41\x44_REQUEST\x10\x01\x12\r\n\tNOT_READY\x10\x02\x12\x15\n\x11PROTOCOL_MISMATCH\x10\x03\x12\x0c\n\x08INTERNAL\x10\x04\x42\x1c\n\x18neurogenesis.mc.proto.v1P\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -42,19 +42,25 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_HELLO']._serialized_start=601
   _globals['_HELLO']._serialized_end=655
   _globals['_SPEC']._serialized_start=658
-  _globals['_SPEC']._serialized_end=862
-  _globals['_RESET']._serialized_start=865
-  _globals['_RESET']._serialized_end=1032
-  _globals['_STEP']._serialized_start=1034
-  _globals['_STEP']._serialized_end=1105
-  _globals['_STEPRESULT']._serialized_start=1107
-  _globals['_STEPRESULT']._serialized_end=1222
-  _globals['_CLOSE']._serialized_start=1224
-  _globals['_CLOSE']._serialized_end=1231
-  _globals['_CLOSED']._serialized_start=1233
-  _globals['_CLOSED']._serialized_end=1241
-  _globals['_ERROR']._serialized_start=1244
-  _globals['_ERROR']._serialized_end=1404
-  _globals['_ERROR_CODE']._serialized_start=1316
-  _globals['_ERROR_CODE']._serialized_end=1404
+  _globals['_SPEC']._serialized_end=916
+  _globals['_RECIPEINFO']._serialized_start=919
+  _globals['_RECIPEINFO']._serialized_end=1206
+  _globals['_RECIPEINFO_STATION']._serialized_start=1103
+  _globals['_RECIPEINFO_STATION']._serialized_end=1206
+  _globals['_RESET']._serialized_start=1209
+  _globals['_RESET']._serialized_end=1420
+  _globals['_OBSCONFIG']._serialized_start=1422
+  _globals['_OBSCONFIG']._serialized_end=1452
+  _globals['_STEP']._serialized_start=1454
+  _globals['_STEP']._serialized_end=1525
+  _globals['_STEPRESULT']._serialized_start=1527
+  _globals['_STEPRESULT']._serialized_end=1642
+  _globals['_CLOSE']._serialized_start=1644
+  _globals['_CLOSE']._serialized_end=1651
+  _globals['_CLOSED']._serialized_start=1653
+  _globals['_CLOSED']._serialized_end=1661
+  _globals['_ERROR']._serialized_start=1664
+  _globals['_ERROR']._serialized_end=1824
+  _globals['_ERROR_CODE']._serialized_start=1736
+  _globals['_ERROR_CODE']._serialized_end=1824
 # @@protoc_insertion_point(module_scope)

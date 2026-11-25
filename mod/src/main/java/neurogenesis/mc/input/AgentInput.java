@@ -6,6 +6,7 @@ import java.util.List;
 import neurogenesis.mc.proto.v1.AgentAction;
 import neurogenesis.mc.proto.v1.ClickSlot;
 import neurogenesis.mc.proto.v1.InventoryAction;
+import neurogenesis.mc.proto.v1.PlaceRecipe;
 
 /** The keys an agent holds for the current step, plus one-shot actions consumed on the step's first tick. */
 public final class AgentInput {
@@ -16,6 +17,7 @@ public final class AgentInput {
 	public boolean drop, dropStack, swapHands;
 	public InventoryAction inventory = InventoryAction.INVENTORY_NONE;
 	public final List<ClickSlot> clicks = new ArrayList<>();
+	public final List<PlaceRecipe> recipes = new ArrayList<>();
 	private boolean oneShotsPending;
 
 	public void set(AgentAction a) {
@@ -37,6 +39,8 @@ public final class AgentInput {
 		inventory = a.getInventory();
 		clicks.clear();
 		clicks.addAll(a.getClicksList());
+		recipes.clear();
+		recipes.addAll(a.getRecipesList());
 		oneShotsPending = true;
 	}
 
@@ -55,6 +59,7 @@ public final class AgentInput {
 		drop = dropStack = swapHands = false;
 		inventory = InventoryAction.INVENTORY_NONE;
 		clicks.clear();
+		recipes.clear();
 		oneShotsPending = false;
 	}
 }

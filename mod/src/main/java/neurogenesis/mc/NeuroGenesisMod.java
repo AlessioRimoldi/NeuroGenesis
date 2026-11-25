@@ -14,11 +14,12 @@ import neurogenesis.mc.sim.Lockstep;
 /** Common entrypoint: runs on the dedicated server and (in M2) inside a client's integrated server. */
 public class NeuroGenesisMod implements ModInitializer {
 	public static final String MOD_ID = "neurogenesis";
-	public static final int PROTOCOL_VERSION = 1;
+	public static final int PROTOCOL_VERSION = 2;
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	private static volatile @Nullable Lockstep lockstep;
 	private static volatile @Nullable ControlServer controlServer;
+	private static volatile @Nullable EpisodeManager episodes;
 
 	@Override
 	public void onInitialize() {
@@ -29,7 +30,9 @@ public class NeuroGenesisMod implements ModInitializer {
 			if (!config.controlEnabled()) {
 				return;
 			}
-			Lockstep ls = new Lockstep(server, new EpisodeManager(server));
+			EpisodeManager em = new EpisodeManager(server);
+			episodes = em;
+			Lockstep ls = new Lockstep(server, em);
 			lockstep = ls;
 			ControlServer cs = new ControlServer(config, ls);
 			controlServer = cs;
@@ -42,6 +45,13 @@ public class NeuroGenesisMod implements ModInitializer {
 			}
 			controlServer = null;
 			lockstep = null;
+			episodes = null;
+		});
+		ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resources, success) -> {
+			EpisodeManager em = episodes;
+			if (em != null && success) {
+				server.execute(em::invalidateRecipes);
+			}
 		});
 	}
 

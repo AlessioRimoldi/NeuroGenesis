@@ -47,7 +47,7 @@ class Hello(_message.Message):
     def __init__(self, protocol_version: _Optional[int] = ..., client_name: _Optional[str] = ...) -> None: ...
 
 class Spec(_message.Message):
-    __slots__ = ("protocol_version", "minecraft_version", "mod_version", "server_tick", "max_agents", "item_vocab", "block_vocab", "entity_vocab", "menu_vocab")
+    __slots__ = ("protocol_version", "minecraft_version", "mod_version", "server_tick", "max_agents", "item_vocab", "block_vocab", "entity_vocab", "menu_vocab", "recipe_vocab")
     PROTOCOL_VERSION_FIELD_NUMBER: _ClassVar[int]
     MINECRAFT_VERSION_FIELD_NUMBER: _ClassVar[int]
     MOD_VERSION_FIELD_NUMBER: _ClassVar[int]
@@ -57,6 +57,7 @@ class Spec(_message.Message):
     BLOCK_VOCAB_FIELD_NUMBER: _ClassVar[int]
     ENTITY_VOCAB_FIELD_NUMBER: _ClassVar[int]
     MENU_VOCAB_FIELD_NUMBER: _ClassVar[int]
+    RECIPE_VOCAB_FIELD_NUMBER: _ClassVar[int]
     protocol_version: int
     minecraft_version: str
     mod_version: str
@@ -66,21 +67,62 @@ class Spec(_message.Message):
     block_vocab: _containers.RepeatedScalarFieldContainer[str]
     entity_vocab: _containers.RepeatedScalarFieldContainer[str]
     menu_vocab: _containers.RepeatedScalarFieldContainer[str]
-    def __init__(self, protocol_version: _Optional[int] = ..., minecraft_version: _Optional[str] = ..., mod_version: _Optional[str] = ..., server_tick: _Optional[int] = ..., max_agents: _Optional[int] = ..., item_vocab: _Optional[_Iterable[str]] = ..., block_vocab: _Optional[_Iterable[str]] = ..., entity_vocab: _Optional[_Iterable[str]] = ..., menu_vocab: _Optional[_Iterable[str]] = ...) -> None: ...
+    recipe_vocab: _containers.RepeatedCompositeFieldContainer[RecipeInfo]
+    def __init__(self, protocol_version: _Optional[int] = ..., minecraft_version: _Optional[str] = ..., mod_version: _Optional[str] = ..., server_tick: _Optional[int] = ..., max_agents: _Optional[int] = ..., item_vocab: _Optional[_Iterable[str]] = ..., block_vocab: _Optional[_Iterable[str]] = ..., entity_vocab: _Optional[_Iterable[str]] = ..., menu_vocab: _Optional[_Iterable[str]] = ..., recipe_vocab: _Optional[_Iterable[_Union[RecipeInfo, _Mapping]]] = ...) -> None: ...
+
+class RecipeInfo(_message.Message):
+    __slots__ = ("display_id", "recipe_id", "result_item", "result_count", "station", "width", "height")
+    class Station(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+        __slots__ = ()
+        OTHER: _ClassVar[RecipeInfo.Station]
+        INVENTORY_2X2: _ClassVar[RecipeInfo.Station]
+        CRAFTING_TABLE: _ClassVar[RecipeInfo.Station]
+        FURNACE: _ClassVar[RecipeInfo.Station]
+        BLAST_FURNACE: _ClassVar[RecipeInfo.Station]
+        SMOKER: _ClassVar[RecipeInfo.Station]
+    OTHER: RecipeInfo.Station
+    INVENTORY_2X2: RecipeInfo.Station
+    CRAFTING_TABLE: RecipeInfo.Station
+    FURNACE: RecipeInfo.Station
+    BLAST_FURNACE: RecipeInfo.Station
+    SMOKER: RecipeInfo.Station
+    DISPLAY_ID_FIELD_NUMBER: _ClassVar[int]
+    RECIPE_ID_FIELD_NUMBER: _ClassVar[int]
+    RESULT_ITEM_FIELD_NUMBER: _ClassVar[int]
+    RESULT_COUNT_FIELD_NUMBER: _ClassVar[int]
+    STATION_FIELD_NUMBER: _ClassVar[int]
+    WIDTH_FIELD_NUMBER: _ClassVar[int]
+    HEIGHT_FIELD_NUMBER: _ClassVar[int]
+    display_id: int
+    recipe_id: str
+    result_item: int
+    result_count: int
+    station: RecipeInfo.Station
+    width: int
+    height: int
+    def __init__(self, display_id: _Optional[int] = ..., recipe_id: _Optional[str] = ..., result_item: _Optional[int] = ..., result_count: _Optional[int] = ..., station: _Optional[_Union[RecipeInfo.Station, str]] = ..., width: _Optional[int] = ..., height: _Optional[int] = ...) -> None: ...
 
 class Reset(_message.Message):
-    __slots__ = ("seed", "arena", "agents", "settle_ticks", "max_episode_ticks")
+    __slots__ = ("seed", "arena", "agents", "settle_ticks", "max_episode_ticks", "obs")
     SEED_FIELD_NUMBER: _ClassVar[int]
     ARENA_FIELD_NUMBER: _ClassVar[int]
     AGENTS_FIELD_NUMBER: _ClassVar[int]
     SETTLE_TICKS_FIELD_NUMBER: _ClassVar[int]
     MAX_EPISODE_TICKS_FIELD_NUMBER: _ClassVar[int]
+    OBS_FIELD_NUMBER: _ClassVar[int]
     seed: int
     arena: _arena_pb2.ArenaConfig
     agents: _containers.RepeatedCompositeFieldContainer[_arena_pb2.AgentConfig]
     settle_ticks: int
     max_episode_ticks: int
-    def __init__(self, seed: _Optional[int] = ..., arena: _Optional[_Union[_arena_pb2.ArenaConfig, _Mapping]] = ..., agents: _Optional[_Iterable[_Union[_arena_pb2.AgentConfig, _Mapping]]] = ..., settle_ticks: _Optional[int] = ..., max_episode_ticks: _Optional[int] = ...) -> None: ...
+    obs: ObsConfig
+    def __init__(self, seed: _Optional[int] = ..., arena: _Optional[_Union[_arena_pb2.ArenaConfig, _Mapping]] = ..., agents: _Optional[_Iterable[_Union[_arena_pb2.AgentConfig, _Mapping]]] = ..., settle_ticks: _Optional[int] = ..., max_episode_ticks: _Optional[int] = ..., obs: _Optional[_Union[ObsConfig, _Mapping]] = ...) -> None: ...
+
+class ObsConfig(_message.Message):
+    __slots__ = ("craftable",)
+    CRAFTABLE_FIELD_NUMBER: _ClassVar[int]
+    craftable: bool
+    def __init__(self, craftable: _Optional[bool] = ...) -> None: ...
 
 class Step(_message.Message):
     __slots__ = ("ticks", "actions")

@@ -30,6 +30,15 @@ message AgentAction {
   bool swap_hands = 16;
   InventoryAction inventory = 17;
   repeated ClickSlot clicks = 18;
+  // Recipe-book placements, applied after `inventory` and before `clicks` (needs an open crafting/furnace screen).
+  repeated PlaceRecipe recipes = 19;
+}
+
+// Clicking a recipe in vanilla's recipe book: the server moves the ingredients from the inventory into the grid.
+// Take the result afterwards with a click on the result slot (e.g. QUICK_MOVE on slot 0).
+message PlaceRecipe {
+  uint32 recipe = 1;    // recipe display id (index into Spec.recipe_vocab)
+  bool max = 2;         // shift-click: place as many sets as the inventory allows
 }
 
 enum InventoryAction {

@@ -49,6 +49,25 @@ message Spec {
   repeated string block_vocab = 7;
   repeated string entity_vocab = 8;
   repeated string menu_vocab = 9;
+  repeated RecipeInfo recipe_vocab = 10;   // index = recipe display id
+}
+
+message RecipeInfo {
+  enum Station {
+    OTHER = 0;            // not placeable with the recipe book (stonecutter, smithing, campfire)
+    INVENTORY_2X2 = 1;    // fits the inventory grid (also craftable on a crafting table)
+    CRAFTING_TABLE = 2;
+    FURNACE = 3;
+    BLAST_FURNACE = 4;
+    SMOKER = 5;
+  }
+  uint32 display_id = 1;
+  string recipe_id = 2;   // e.g. "minecraft:oak_planks"
+  int32 result_item = 3;  // item registry id
+  int32 result_count = 4;
+  Station station = 5;
+  int32 width = 6;        // shaped crafting only (0 otherwise)
+  int32 height = 7;
 }
 
 message Reset {
@@ -57,6 +76,12 @@ message Reset {
   repeated AgentConfig agents = 3;
   uint32 settle_ticks = 4;       // ticks simulated after setup before the first observation (default 5)
   uint32 max_episode_ticks = 5;  // 0 = unlimited
+  ObsConfig obs = 6;
+}
+
+// Optional (costly) observation parts.
+message ObsConfig {
+  bool craftable = 1;   // fill AgentObs.craftable
 }
 
 message Step {

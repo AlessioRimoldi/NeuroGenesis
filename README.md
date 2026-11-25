@@ -37,6 +37,15 @@ custom senses such as a diffusing *smell* field.
   - the inventory (41 slots) and any open container;
   - the crosshair target and the two smell "antennas";
   - events: damage, death, consumed, picked up, block broken, crafted, attacked.
+- **Inventory and crafting** (`mod/.../crafting`). Agents craft the way a human does: they open a crafting screen,
+  click a recipe in vanilla's recipe book (the server moves the ingredients into the grid), and take the result.
+  The `PlaceRecipe` action is that click.
+  - **Recipe book contents** are set per agent: `recipes="all"` (default) unlocks everything each episode;
+    `"vanilla"` starts empty and unlocks recipes through vanilla's advancements as ingredients are obtained.
+  - **Observations:** with `reset(..., craftable=True)`, each agent also gets the list of recipes it could
+    place right now, which is what the recipe book highlights. Observations also include durability for every
+    inventory slot.
+  - **Raw clicks still work:** `click_slot` remains available for anything the recipe book doesn't cover.
 - **Arena** (`mod/.../arena`). Each reset builds a seeded walled arena in a void world and places food (items or
   blocks). Food can respawn when eaten.
 - **Smell** (`mod/.../sense`). This is a 2-D diffusion and decay field emitted by food, with walls that let no
@@ -76,6 +85,17 @@ with McClient() as mc:
             break
 ```
 
+Crafting with the recipe book (see `neurogenesis.mc.crafting` for slot layouts and recipe lookup):
+
+```python
+from neurogenesis.mc.crafting import RecipeBook, craft
+
+book = RecipeBook(mc.spec)
+mc.reset(agents=[agent("crafter", inventory=[("minecraft:oak_log", 3)])], craftable=True)
+r = mc.step([craft(0, book.find("minecraft:oak_planks"), all=True)])   # open inventory, place, take: 12 planks
+print([book.result_name(book[i]) for i in r.obs[0].craftable])        # e.g. crafting_table, stick, ...
+```
+
 ## Repository layout
 
 | Path | Contents |
@@ -106,6 +126,11 @@ The development server runs without Docker: `make dev-server` (or `cd mod && ./g
 | Death | Terminal, or respawn if configured |
 | Punch between agents | Damage and knockback |
 | End-to-end chemotaxis | A smell-following agent reaches the food |
+| Recipe book | Planks → crafting table and sticks in the 2×2 grid; table placed and opened → wooden pickaxe |
+| Furnace | Raw iron smelted in 200 ticks |
+| Craftable mask | Correct and cached; recomputing costs about 0.15 ms per agent when an inventory changes |
+| Tool wear | Durability drops after mining |
+| Vanilla recipe progression | The torch stays locked with coal and a stick until a stone pickaxe is picked up, and is locked again next episode |
 
 - **Throughput** (laptop, 1 tick per step, random actions, Docker):
 
@@ -118,6 +143,7 @@ The development server runs without Docker: `make dev-server` (or `cd mod && ./g
 ## Roadmap
 
 - **M1 (this):** headless simulation core: lockstep, agents, actions, arena, smell, Docker.
+- **M1.5 (this):** inventory and crafting: recipe-book action, unlock policy, craftable mask, durability.
 - **M2:** vision. First the "host client": the same mod inside a client's integrated server, rendering every
   agent's first-person view per tick. Measure its limits, then decide whether separate camera clients are needed.
 - **M3:** RL framework integration: Gymnasium and PettingZoo wrappers, task modules with rewards (starting with

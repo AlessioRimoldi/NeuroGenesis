@@ -40,6 +40,10 @@ message AgentObs {
   Crosshair crosshair = 23;
   Smell smell = 24;
   repeated Event events = 25;   // things that happened during this step
+  // Unlocked recipe display ids craftable now from inventory + grid in the current station
+  // (2x2 inventory grid when no screen is open). Only filled when Reset.obs.craftable is set.
+  repeated int32 craftable = 26 [packed = true];
+  repeated float inv_durability = 27 [packed = true];  // per inventory slot: durability left (1 = new or not damageable)
 }
 
 message ContainerView {
@@ -81,6 +85,7 @@ message Event {
     BLOCK_BROKEN = 5;  // item_id = block registry id
     CRAFTED = 6;       // item_id, amount = count
     ATTACKED = 7;      // amount = damage dealt, item_id = target entity type
+    RECIPE_UNLOCKED = 8; // amount = number of recipes newly unlocked
   }
   Type type = 1;
   int32 item_id = 2;

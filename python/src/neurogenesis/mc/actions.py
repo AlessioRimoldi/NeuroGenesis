@@ -38,11 +38,13 @@ def action(
     swap_hands: bool = False,
     inventory: str | None = None,
     clicks: Iterable[tuple[int, int] | tuple[int, int, str]] = (),
+    recipes: Iterable[int | tuple[int, bool]] = (),
 ) -> action_pb2.AgentAction:
     """Builds an AgentAction.
 
     ``keys`` are held for every tick of the step (names from :data:`KEYS`); ``camera`` is (dyaw, dpitch) in
-    degrees; ``clicks`` are (slot, button[, mode]) applied in the open container screen.
+    degrees; ``clicks`` are (slot, button[, mode]) applied in the open container screen; ``recipes`` are
+    recipe display ids (or (id, max) pairs) placed with the recipe book before the clicks.
     """
     held = {k for k, v in keys.items() if v} if isinstance(keys, Mapping) else set(keys)
     unknown = held - set(KEYS)
@@ -62,6 +64,9 @@ def action(
     for click in clicks:
         slot, button, *mode = click
         a.clicks.add(slot=slot, button=button, mode=CLICK_MODES[mode[0] if mode else "pickup"])
+    for recipe in recipes:
+        rid, use_max = (recipe, False) if isinstance(recipe, int) else recipe
+        a.recipes.add(recipe=rid, max=use_max)
     return a
 
 
@@ -75,12 +80,18 @@ def agent(
     inventory: Iterable[tuple[str, int] | tuple[str, int, int]] = (),
     respawn_on_death: bool = False,
     game_mode: str = "survival",
+    recipes: str = "all",
 ) -> arena_pb2.AgentConfig:
-    """Builds an AgentConfig. ``inventory`` entries are (item_id, count[, slot])."""
+    """Builds an AgentConfig. ``inventory`` entries are (item_id, count[, slot]).
+
+    ``recipes`` is the recipe-book policy: ``"all"`` (every recipe unlocked each episode) or ``"vanilla"``
+    (none at start; unlocked by vanilla advancements as ingredients are obtained).
+    """
     cfg = arena_pb2.AgentConfig(
         name=name,
         respawn_on_death=respawn_on_death,
         game_mode=arena_pb2.GameMode.Value(f"GAME_MODE_{game_mode.upper()}"),
+        recipes=arena_pb2.RecipeUnlock.Value(f"RECIPES_{recipes.upper()}"),
     )
     if pos is not None:
         cfg.spawn_pos.CopyFrom(common_pb2.Vec3d(x=pos[0], y=pos[1], z=pos[2]))

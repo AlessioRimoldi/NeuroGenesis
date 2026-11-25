@@ -1,6 +1,7 @@
 package neurogenesis.mc.agent;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.mojang.authlib.GameProfile;
@@ -21,11 +22,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
+import neurogenesis.mc.crafting.CraftableTracker;
 import neurogenesis.mc.input.AgentInput;
 import neurogenesis.mc.input.ClientEmulator;
 import neurogenesis.mc.proto.v1.Event;
@@ -43,6 +46,8 @@ public final class AgentPlayer extends ServerPlayer {
 	private final AgentInput input = new AgentInput();
 	private final ClientEmulator client = new ClientEmulator(this);
 	private final List<Event> events = new ArrayList<>();
+	private final CraftableTracker craftable = new CraftableTracker();
+	private int recipeBookVersion;
 
 	private boolean respawnOnDeath;
 	private boolean terminated;
@@ -66,6 +71,15 @@ public final class AgentPlayer extends ServerPlayer {
 
 	public ClientEmulator client() {
 		return client;
+	}
+
+	public CraftableTracker craftable() {
+		return craftable;
+	}
+
+	/** Changes whenever recipes are unlocked or removed (used to invalidate the craftable cache). */
+	public int recipeBookVersion() {
+		return recipeBookVersion;
 	}
 
 	public boolean isTerminated() {
@@ -308,6 +322,25 @@ public final class AgentPlayer extends ServerPlayer {
 		} else if (stat.getType() == Stats.CUSTOM && Stats.DAMAGE_DEALT.equals(value)) {
 			event(Event.Type.ATTACKED, 0, count / 10.0F);
 		}
+	}
+
+	@Override
+	public int awardRecipes(Collection<RecipeHolder<?>> recipes) {
+		int added = super.awardRecipes(recipes);
+		if (added > 0) {
+			recipeBookVersion++;
+			event(Event.Type.RECIPE_UNLOCKED, 0, added);
+		}
+		return added;
+	}
+
+	@Override
+	public int resetRecipes(Collection<RecipeHolder<?>> recipes) {
+		int removed = super.resetRecipes(recipes);
+		if (removed > 0) {
+			recipeBookVersion++;
+		}
+		return removed;
 	}
 
 	private void event(Event.Type type, int id, float amount) {

@@ -9,7 +9,7 @@ from collections.abc import Iterable
 from neurogenesis.mc.framing import read_frame, write_frame
 from neurogenesis.mc.v1 import action_pb2, arena_pb2, control_pb2
 
-PROTOCOL_VERSION = 1
+PROTOCOL_VERSION = 2
 DEFAULT_PORT = 25570
 
 
@@ -52,12 +52,15 @@ class McClient:
         agents: Iterable[arena_pb2.AgentConfig] = (),
         settle_ticks: int = 5,
         max_episode_ticks: int = 0,
+        craftable: bool = False,
     ) -> control_pb2.StepResult:
+        """Starts an episode. ``craftable=True`` fills ``AgentObs.craftable`` (recipe-book highlights)."""
         reset = control_pb2.Reset(
             seed=seed,
             agents=list(agents),
             settle_ticks=settle_ticks,
             max_episode_ticks=max_episode_ticks,
+            obs=control_pb2.ObsConfig(craftable=craftable),
         )
         if arena is not None:
             reset.arena.CopyFrom(arena)

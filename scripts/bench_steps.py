@@ -15,13 +15,16 @@ def main() -> None:
     p.add_argument("--agents", type=int, nargs="+", default=[1, 4, 16, 64])
     p.add_argument("--steps", type=int, default=500)
     p.add_argument("--ticks", type=int, default=1, help="game ticks per step")
+    p.add_argument("--craftable", action="store_true", help="also compute the craftable-recipe mask")
     args = p.parse_args()
     rng = random.Random(0)
     with McClient(args.host, args.port) as c:
         print(f"{'agents':>6} {'steps/s':>9} {'agent-ticks/s':>14} {'server ms/step':>15}")
         for n in args.agents:
             c.reset(seed=0, arena=arena((48, 48), food_count=8, smell=True),
-                    agents=[agent(f"bench{i}") for i in range(n)])
+                    agents=[agent(f"bench{i}", inventory=[("minecraft:oak_log", 8), ("minecraft:cobblestone", 16)])
+                            for i in range(n)],
+                    craftable=args.craftable)
             server_us = 0
             t0 = time.perf_counter()
             for _ in range(args.steps):

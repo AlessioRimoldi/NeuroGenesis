@@ -59,4 +59,10 @@ message AgentConfig {
   optional int32 food = 6;         // default 20
   repeated ItemStack inventory = 7;
   bool respawn_on_death = 8;       // false: death is terminal until the next reset
+  RecipeUnlock recipes = 9;        // which recipes the agent's recipe book contains
+}
+
+enum RecipeUnlock {
+  RECIPES_ALL = 0;       // every recipe unlocked at the start of each episode
+  RECIPES_VANILLA = 1;   // none at start; unlocked by vanilla advancements as ingredients are obtained
 }

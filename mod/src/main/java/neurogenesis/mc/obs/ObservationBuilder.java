@@ -12,6 +12,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 import neurogenesis.mc.agent.AgentPlayer;
+import neurogenesis.mc.crafting.RecipeIndex;
 import neurogenesis.mc.input.Crosshair;
 import neurogenesis.mc.proto.v1.AgentObs;
 import neurogenesis.mc.proto.v1.ContainerView;
@@ -27,7 +28,9 @@ public final class ObservationBuilder {
 	private ObservationBuilder() {
 	}
 
-	public static AgentObs build(AgentPlayer agent, @Nullable SmellSense smell, boolean truncated) {
+	/** {@code recipes} is non-null only when the craftable mask was requested (ObsConfig.craftable). */
+	public static AgentObs build(AgentPlayer agent, @Nullable SmellSense smell, @Nullable RecipeIndex recipes, boolean truncated) {
+		agent.client().syncScreenWithServer(); // menus can also open/close during the server tick
 		Vec3 pos = agent.position();
 		Vec3 vel = agent.getDeltaMovement();
 		AgentObs.Builder b = AgentObs.newBuilder()
@@ -56,6 +59,12 @@ public final class ObservationBuilder {
 			ItemStack stack = inv.getItem(slot);
 			b.addInvItem(itemId(stack));
 			b.addInvCount(stack.getCount());
+			b.addInvDurability(stack.isDamageableItem()
+				? 1.0F - (float) stack.getDamageValue() / stack.getMaxDamage()
+				: 1.0F);
+		}
+		if (recipes != null) {
+			b.addAllCraftable(agent.craftable().craftable(agent, recipes));
 		}
 
 		b.setContainer(container(agent));

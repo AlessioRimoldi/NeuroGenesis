@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 
+import neurogenesis.mc.crafting.RecipePolicy;
 import neurogenesis.mc.proto.v1.AgentConfig;
 import neurogenesis.mc.proto.v1.GameMode;
 
@@ -125,6 +126,8 @@ public final class AgentManager {
 
 		Inventory inventory = agent.getInventory();
 		inventory.clearContent();
+		// Before the starting items: under vanilla progression, receiving them may unlock recipes, as for a player.
+		RecipePolicy.apply(agent, config.getRecipes());
 		inventory.setSelectedSlot(0);
 		for (var stack : config.getInventoryList()) {
 			Item item = BuiltInRegistries.ITEM.getOptional(Identifier.parse(stack.getId()))
@@ -138,6 +141,8 @@ public final class AgentManager {
 		}
 		agent.inventoryMenu.broadcastChanges();
 		teleport(agent, level, pos, yaw);
+		agent.drainEvents(); // setup is not part of the episode
+		agent.craftable().invalidate();
 	}
 
 	private static void teleport(AgentPlayer agent, ServerLevel level, Vec3 pos, float yaw) {

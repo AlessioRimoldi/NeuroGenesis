@@ -36,7 +36,7 @@ CLICK_QUICK_CRAFT: ClickMode
 CLICK_PICKUP_ALL: ClickMode
 
 class AgentAction(_message.Message):
-    __slots__ = ("agent_id", "forward", "back", "left", "right", "jump", "sneak", "sprint", "attack", "use", "camera_dyaw", "camera_dpitch", "hotbar", "drop", "drop_stack", "swap_hands", "inventory", "clicks")
+    __slots__ = ("agent_id", "forward", "back", "left", "right", "jump", "sneak", "sprint", "attack", "use", "camera_dyaw", "camera_dpitch", "hotbar", "drop", "drop_stack", "swap_hands", "inventory", "clicks", "recipes")
     AGENT_ID_FIELD_NUMBER: _ClassVar[int]
     FORWARD_FIELD_NUMBER: _ClassVar[int]
     BACK_FIELD_NUMBER: _ClassVar[int]
@@ -55,6 +55,7 @@ class AgentAction(_message.Message):
     SWAP_HANDS_FIELD_NUMBER: _ClassVar[int]
     INVENTORY_FIELD_NUMBER: _ClassVar[int]
     CLICKS_FIELD_NUMBER: _ClassVar[int]
+    RECIPES_FIELD_NUMBER: _ClassVar[int]
     agent_id: int
     forward: bool
     back: bool
@@ -73,7 +74,16 @@ class AgentAction(_message.Message):
     swap_hands: bool
     inventory: InventoryAction
     clicks: _containers.RepeatedCompositeFieldContainer[ClickSlot]
-    def __init__(self, agent_id: _Optional[int] = ..., forward: _Optional[bool] = ..., back: _Optional[bool] = ..., left: _Optional[bool] = ..., right: _Optional[bool] = ..., jump: _Optional[bool] = ..., sneak: _Optional[bool] = ..., sprint: _Optional[bool] = ..., attack: _Optional[bool] = ..., use: _Optional[bool] = ..., camera_dyaw: _Optional[float] = ..., camera_dpitch: _Optional[float] = ..., hotbar: _Optional[int] = ..., drop: _Optional[bool] = ..., drop_stack: _Optional[bool] = ..., swap_hands: _Optional[bool] = ..., inventory: _Optional[_Union[InventoryAction, str]] = ..., clicks: _Optional[_Iterable[_Union[ClickSlot, _Mapping]]] = ...) -> None: ...
+    recipes: _containers.RepeatedCompositeFieldContainer[PlaceRecipe]
+    def __init__(self, agent_id: _Optional[int] = ..., forward: _Optional[bool] = ..., back: _Optional[bool] = ..., left: _Optional[bool] = ..., right: _Optional[bool] = ..., jump: _Optional[bool] = ..., sneak: _Optional[bool] = ..., sprint: _Optional[bool] = ..., attack: _Optional[bool] = ..., use: _Optional[bool] = ..., camera_dyaw: _Optional[float] = ..., camera_dpitch: _Optional[float] = ..., hotbar: _Optional[int] = ..., drop: _Optional[bool] = ..., drop_stack: _Optional[bool] = ..., swap_hands: _Optional[bool] = ..., inventory: _Optional[_Union[InventoryAction, str]] = ..., clicks: _Optional[_Iterable[_Union[ClickSlot, _Mapping]]] = ..., recipes: _Optional[_Iterable[_Union[PlaceRecipe, _Mapping]]] = ...) -> None: ...
+
+class PlaceRecipe(_message.Message):
+    __slots__ = ("recipe", "max")
+    RECIPE_FIELD_NUMBER: _ClassVar[int]
+    MAX_FIELD_NUMBER: _ClassVar[int]
+    recipe: int
+    max: bool
+    def __init__(self, recipe: _Optional[int] = ..., max: _Optional[bool] = ...) -> None: ...
 
 class ClickSlot(_message.Message):
     __slots__ = ("slot", "button", "mode")

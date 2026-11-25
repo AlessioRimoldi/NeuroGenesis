@@ -20,9 +20,11 @@ import neurogenesis.mc.agent.AgentPlayer;
 import neurogenesis.mc.arena.ArenaBuilder;
 import neurogenesis.mc.arena.ArenaSpec;
 import neurogenesis.mc.arena.FoodSpawner;
+import neurogenesis.mc.crafting.RecipeIndex;
 import neurogenesis.mc.obs.ObservationBuilder;
 import neurogenesis.mc.proto.v1.AgentAction;
 import neurogenesis.mc.proto.v1.AgentConfig;
+import neurogenesis.mc.proto.v1.ObsConfig;
 import neurogenesis.mc.proto.v1.Reset;
 import neurogenesis.mc.proto.v1.SmellConfig;
 import neurogenesis.mc.proto.v1.Spec;
@@ -45,6 +47,8 @@ public final class EpisodeManager implements Simulation {
 	private @Nullable ArenaSpec spec;
 	private @Nullable SmellSense smell;
 	private SplittableRandom rng = new SplittableRandom(0);
+	private @Nullable RecipeIndex recipeIndex;
+	private ObsConfig obsConfig = ObsConfig.getDefaultInstance();
 	private boolean ready;
 	private int episodeTick;
 	private int maxEpisodeTicks;
@@ -56,6 +60,21 @@ public final class EpisodeManager implements Simulation {
 
 	public AgentManager agents() {
 		return agents;
+	}
+
+	public RecipeIndex recipes() {
+		if (recipeIndex == null) {
+			recipeIndex = RecipeIndex.build(server);
+		}
+		return recipeIndex;
+	}
+
+	/** Recipes can change with datapack reloads (/reload). */
+	public void invalidateRecipes() {
+		recipeIndex = null;
+		for (AgentPlayer agent : agents.agents()) {
+			agent.craftable().invalidate();
+		}
 	}
 
 	@Override
@@ -72,6 +91,7 @@ public final class EpisodeManager implements Simulation {
 			.addAllBlockVocab(Vocab.blocks())
 			.addAllEntityVocab(Vocab.entities())
 			.addAllMenuVocab(Vocab.menus())
+			.addAllRecipeVocab(recipes().entries().stream().map(RecipeIndex.Entry::proto).toList())
 			.build();
 	}
 
@@ -102,6 +122,7 @@ public final class EpisodeManager implements Simulation {
 		food.reset(level, newSpec, rng, spawns);
 		smell = buildSmell(newSpec);
 
+		obsConfig = reset.getObs();
 		episodeTick = 0;
 		maxEpisodeTicks = reset.getMaxEpisodeTicks();
 		ready = true;
@@ -156,8 +177,9 @@ public final class EpisodeManager implements Simulation {
 	public StepResult.Builder observe() {
 		boolean truncated = maxEpisodeTicks > 0 && episodeTick >= maxEpisodeTicks;
 		StepResult.Builder result = StepResult.newBuilder().setEpisodeTick(episodeTick);
+		RecipeIndex index = obsConfig.getCraftable() ? recipes() : null;
 		for (AgentPlayer agent : agents.agents()) {
-			result.addObs(ObservationBuilder.build(agent, smell, truncated));
+			result.addObs(ObservationBuilder.build(agent, smell, index, truncated));
 		}
 		return result;
 	}

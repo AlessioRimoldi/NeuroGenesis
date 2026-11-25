@@ -9,7 +9,7 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class AgentObs(_message.Message):
-    __slots__ = ("agent_id", "name", "alive", "terminated", "truncated", "pos", "vel", "yaw", "pitch", "on_ground", "in_water", "crouching", "sprinting", "using_item", "health", "food", "saturation", "air", "inv_item", "inv_count", "selected_slot", "container", "crosshair", "smell", "events")
+    __slots__ = ("agent_id", "name", "alive", "terminated", "truncated", "pos", "vel", "yaw", "pitch", "on_ground", "in_water", "crouching", "sprinting", "using_item", "health", "food", "saturation", "air", "inv_item", "inv_count", "selected_slot", "container", "crosshair", "smell", "events", "craftable", "inv_durability")
     AGENT_ID_FIELD_NUMBER: _ClassVar[int]
     NAME_FIELD_NUMBER: _ClassVar[int]
     ALIVE_FIELD_NUMBER: _ClassVar[int]
@@ -35,6 +35,8 @@ class AgentObs(_message.Message):
     CROSSHAIR_FIELD_NUMBER: _ClassVar[int]
     SMELL_FIELD_NUMBER: _ClassVar[int]
     EVENTS_FIELD_NUMBER: _ClassVar[int]
+    CRAFTABLE_FIELD_NUMBER: _ClassVar[int]
+    INV_DURABILITY_FIELD_NUMBER: _ClassVar[int]
     agent_id: int
     name: str
     alive: bool
@@ -60,7 +62,9 @@ class AgentObs(_message.Message):
     crosshair: Crosshair
     smell: Smell
     events: _containers.RepeatedCompositeFieldContainer[Event]
-    def __init__(self, agent_id: _Optional[int] = ..., name: _Optional[str] = ..., alive: _Optional[bool] = ..., terminated: _Optional[bool] = ..., truncated: _Optional[bool] = ..., pos: _Optional[_Union[_common_pb2.Vec3d, _Mapping]] = ..., vel: _Optional[_Union[_common_pb2.Vec3d, _Mapping]] = ..., yaw: _Optional[float] = ..., pitch: _Optional[float] = ..., on_ground: _Optional[bool] = ..., in_water: _Optional[bool] = ..., crouching: _Optional[bool] = ..., sprinting: _Optional[bool] = ..., using_item: _Optional[bool] = ..., health: _Optional[float] = ..., food: _Optional[int] = ..., saturation: _Optional[float] = ..., air: _Optional[int] = ..., inv_item: _Optional[_Iterable[int]] = ..., inv_count: _Optional[_Iterable[int]] = ..., selected_slot: _Optional[int] = ..., container: _Optional[_Union[ContainerView, _Mapping]] = ..., crosshair: _Optional[_Union[Crosshair, _Mapping]] = ..., smell: _Optional[_Union[Smell, _Mapping]] = ..., events: _Optional[_Iterable[_Union[Event, _Mapping]]] = ...) -> None: ...
+    craftable: _containers.RepeatedScalarFieldContainer[int]
+    inv_durability: _containers.RepeatedScalarFieldContainer[float]
+    def __init__(self, agent_id: _Optional[int] = ..., name: _Optional[str] = ..., alive: _Optional[bool] = ..., terminated: _Optional[bool] = ..., truncated: _Optional[bool] = ..., pos: _Optional[_Union[_common_pb2.Vec3d, _Mapping]] = ..., vel: _Optional[_Union[_common_pb2.Vec3d, _Mapping]] = ..., yaw: _Optional[float] = ..., pitch: _Optional[float] = ..., on_ground: _Optional[bool] = ..., in_water: _Optional[bool] = ..., crouching: _Optional[bool] = ..., sprinting: _Optional[bool] = ..., using_item: _Optional[bool] = ..., health: _Optional[float] = ..., food: _Optional[int] = ..., saturation: _Optional[float] = ..., air: _Optional[int] = ..., inv_item: _Optional[_Iterable[int]] = ..., inv_count: _Optional[_Iterable[int]] = ..., selected_slot: _Optional[int] = ..., container: _Optional[_Union[ContainerView, _Mapping]] = ..., crosshair: _Optional[_Union[Crosshair, _Mapping]] = ..., smell: _Optional[_Union[Smell, _Mapping]] = ..., events: _Optional[_Iterable[_Union[Event, _Mapping]]] = ..., craftable: _Optional[_Iterable[int]] = ..., inv_durability: _Optional[_Iterable[float]] = ...) -> None: ...
 
 class ContainerView(_message.Message):
     __slots__ = ("open", "menu_type", "slot_item", "slot_count", "carried_item", "carried_count")
@@ -124,6 +128,7 @@ class Event(_message.Message):
         BLOCK_BROKEN: _ClassVar[Event.Type]
         CRAFTED: _ClassVar[Event.Type]
         ATTACKED: _ClassVar[Event.Type]
+        RECIPE_UNLOCKED: _ClassVar[Event.Type]
     UNKNOWN: Event.Type
     DAMAGE: Event.Type
     DEATH: Event.Type
@@ -132,6 +137,7 @@ class Event(_message.Message):
     BLOCK_BROKEN: Event.Type
     CRAFTED: Event.Type
     ATTACKED: Event.Type
+    RECIPE_UNLOCKED: Event.Type
     TYPE_FIELD_NUMBER: _ClassVar[int]
     ITEM_ID_FIELD_NUMBER: _ClassVar[int]
     AMOUNT_FIELD_NUMBER: _ClassVar[int]

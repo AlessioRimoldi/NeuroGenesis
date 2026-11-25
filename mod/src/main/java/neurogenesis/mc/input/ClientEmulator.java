@@ -8,6 +8,7 @@ import net.minecraft.network.HashedStack;
 import net.minecraft.network.protocol.game.ServerboundAttackPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
+import net.minecraft.network.protocol.game.ServerboundPlaceRecipePacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
 import net.minecraft.network.protocol.game.ServerboundPunchPacket;
@@ -22,6 +23,7 @@ import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.display.RecipeDisplayId;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -33,6 +35,7 @@ import org.jspecify.annotations.Nullable;
 import neurogenesis.mc.agent.AgentPlayer;
 import neurogenesis.mc.proto.v1.ClickSlot;
 import neurogenesis.mc.proto.v1.InventoryAction;
+import neurogenesis.mc.proto.v1.PlaceRecipe;
 
 /**
  * Emulates the vanilla client for one agent: keybind handling (Minecraft.handleKeybinds), the block-breaking state
@@ -141,6 +144,7 @@ public final class ClientEmulator {
 		continueAttack(attackDown);
 		prevAttack = attackDown;
 		prevUse = useDown;
+		syncScreenWithServer(); // e.g. "use" on a crafting table opened its menu during this tick
 	}
 
 	/** The client's movement vector (KeyboardInput.tick), already modified like LocalPlayer.modifyInput. */
@@ -190,6 +194,11 @@ public final class ClientEmulator {
 			}
 		}
 		if (screenOpen) {
+			// Recipe book: like clicking a recipe; the server fills the grid (if unlocked and affordable).
+			for (PlaceRecipe recipe : in.recipes) {
+				net.handlePlaceRecipe(new ServerboundPlaceRecipePacket(player.containerMenu.containerId,
+					new RecipeDisplayId((int) recipe.getRecipe()), recipe.getMax()));
+			}
 			for (ClickSlot click : in.clicks) {
 				AbstractContainerMenu menu = player.containerMenu;
 				net.handleContainerClick(new ServerboundContainerClickPacket(menu.containerId, menu.getStateId(),
@@ -223,7 +232,7 @@ public final class ClientEmulator {
 	}
 
 	/** The server opens screens (crafting table, chest) and closes them (out of reach); follow it like a client. */
-	private void syncScreenWithServer() {
+	public void syncScreenWithServer() {
 		int containerId = player.containerMenu.containerId;
 		if (containerId != lastContainerId) {
 			if (player.containerMenu != player.inventoryMenu) {

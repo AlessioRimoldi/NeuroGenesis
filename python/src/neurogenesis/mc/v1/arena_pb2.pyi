@@ -14,10 +14,17 @@ class GameMode(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     GAME_MODE_ADVENTURE: _ClassVar[GameMode]
     GAME_MODE_CREATIVE: _ClassVar[GameMode]
     GAME_MODE_SPECTATOR: _ClassVar[GameMode]
+
+class RecipeUnlock(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    RECIPES_ALL: _ClassVar[RecipeUnlock]
+    RECIPES_VANILLA: _ClassVar[RecipeUnlock]
 GAME_MODE_SURVIVAL: GameMode
 GAME_MODE_ADVENTURE: GameMode
 GAME_MODE_CREATIVE: GameMode
 GAME_MODE_SPECTATOR: GameMode
+RECIPES_ALL: RecipeUnlock
+RECIPES_VANILLA: RecipeUnlock
 
 class ArenaConfig(_message.Message):
     __slots__ = ("size_x", "size_z", "wall_height", "floor_block", "wall_block", "food", "smell")
@@ -80,7 +87,7 @@ class SmellConfig(_message.Message):
     def __init__(self, enabled: _Optional[bool] = ..., cell_size: _Optional[float] = ..., diffusion: _Optional[float] = ..., decay: _Optional[float] = ..., emission: _Optional[float] = ..., prewarm_ticks: _Optional[int] = ..., antenna_lateral: _Optional[float] = ..., antenna_forward: _Optional[float] = ...) -> None: ...
 
 class AgentConfig(_message.Message):
-    __slots__ = ("name", "spawn_pos", "spawn_yaw", "game_mode", "health", "food", "inventory", "respawn_on_death")
+    __slots__ = ("name", "spawn_pos", "spawn_yaw", "game_mode", "health", "food", "inventory", "respawn_on_death", "recipes")
     NAME_FIELD_NUMBER: _ClassVar[int]
     SPAWN_POS_FIELD_NUMBER: _ClassVar[int]
     SPAWN_YAW_FIELD_NUMBER: _ClassVar[int]
@@ -89,6 +96,7 @@ class AgentConfig(_message.Message):
     FOOD_FIELD_NUMBER: _ClassVar[int]
     INVENTORY_FIELD_NUMBER: _ClassVar[int]
     RESPAWN_ON_DEATH_FIELD_NUMBER: _ClassVar[int]
+    RECIPES_FIELD_NUMBER: _ClassVar[int]
     name: str
     spawn_pos: _common_pb2.Vec3d
     spawn_yaw: float
@@ -97,4 +105,5 @@ class AgentConfig(_message.Message):
     food: int
     inventory: _containers.RepeatedCompositeFieldContainer[_common_pb2.ItemStack]
     respawn_on_death: bool
-    def __init__(self, name: _Optional[str] = ..., spawn_pos: _Optional[_Union[_common_pb2.Vec3d, _Mapping]] = ..., spawn_yaw: _Optional[float] = ..., game_mode: _Optional[_Union[GameMode, str]] = ..., health: _Optional[float] = ..., food: _Optional[int] = ..., inventory: _Optional[_Iterable[_Union[_common_pb2.ItemStack, _Mapping]]] = ..., respawn_on_death: _Optional[bool] = ...) -> None: ...
+    recipes: RecipeUnlock
+    def __init__(self, name: _Optional[str] = ..., spawn_pos: _Optional[_Union[_common_pb2.Vec3d, _Mapping]] = ..., spawn_yaw: _Optional[float] = ..., game_mode: _Optional[_Union[GameMode, str]] = ..., health: _Optional[float] = ..., food: _Optional[int] = ..., inventory: _Optional[_Iterable[_Union[_common_pb2.ItemStack, _Mapping]]] = ..., respawn_on_death: _Optional[bool] = ..., recipes: _Optional[_Union[RecipeUnlock, str]] = ...) -> None: ...
