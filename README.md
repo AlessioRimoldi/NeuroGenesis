@@ -96,6 +96,24 @@ r = mc.step([craft(0, book.find("minecraft:oak_planks"), all=True)])   # open in
 print([book.result_name(book[i]) for i in r.obs[0].craftable])        # e.g. crafting_table, stick, ...
 ```
 
+## Watching the agents
+
+With a purchased Minecraft: Java Edition, set to version **26.3** in the launcher:
+
+1. `make up`, then join `localhost:25565` (Multiplayer → Add Server). You arrive as a spectator.
+2. Give yourself operator rights: `docker exec neurogenesis-mc rcon-cli op <YourName>`.
+3. `make watch` runs three smell-following agents at real-time speed. In game, use `/tp @s 12 72 12` or
+   `/spectate worm0`.
+
+Debug commands (operator level 2):
+- `/ng status` shows the session, episode and agents.
+- `/ng pace 20` slows lockstep to real time; `/ng pace 0` removes the limit. You can also set it at startup
+  with `NG_PACE=20 make up`.
+
+Things to know:
+- Agents exist only while a Python client is connected.
+- Join while a script is stepping (or before it starts), because logging in needs ticks to run.
+
 ## Repository layout
 
 | Path | Contents |

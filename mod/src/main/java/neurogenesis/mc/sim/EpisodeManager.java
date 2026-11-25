@@ -62,6 +62,14 @@ public final class EpisodeManager implements Simulation {
 		return agents;
 	}
 
+	public boolean isReady() {
+		return ready;
+	}
+
+	public int episodeTick() {
+		return episodeTick;
+	}
+
 	public RecipeIndex recipes() {
 		if (recipeIndex == null) {
 			recipeIndex = RecipeIndex.build(server);

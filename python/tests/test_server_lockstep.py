@@ -58,3 +58,22 @@ def test_throughput_single_ticks(client):
     rate = n / (time.perf_counter() - t0)
     print(f"\nempty-world lockstep: {rate:.0f} steps/s")
     assert rate > 200
+
+
+def test_pace_command(client, rcon):
+    client.reset(seed=1, settle_ticks=0)
+    assert "unlimited" in rcon.command("ng pace")
+    assert "20" in rcon.command("ng pace 20")
+    try:
+        t0 = time.perf_counter()
+        for _ in range(10):
+            client.step(ticks=1)
+        paced = time.perf_counter() - t0
+        assert 0.4 < paced < 0.9               # 10 ticks at 20 ticks/s ~ 0.5 s
+        assert "connected" in rcon.command("ng status")
+    finally:
+        rcon.command("ng pace 0")
+    t0 = time.perf_counter()
+    for _ in range(10):
+        client.step(ticks=1)
+    assert time.perf_counter() - t0 < 0.2       # unlimited again

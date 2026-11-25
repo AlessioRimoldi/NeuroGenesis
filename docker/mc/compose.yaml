@@ -37,6 +37,7 @@ services:
       ENABLE_RCON: "TRUE"
       RCON_PASSWORD: ${NG_RCON_PASSWORD:-neurogenesis}
       NG_CONTROL_PORT: "25570"
+      NG_PACE: ${NG_PACE:-0}   # lockstep ticks/s (0 = unlimited, 20 = real time); also /ng pace in game
     ports:
       - "127.0.0.1:${NG_GAME_PORT:-25565}:25565"       # join with a vanilla 26.3 client to watch
       - "127.0.0.1:${NG_CONTROL_PORT:-25570}:25570"    # Python lockstep control

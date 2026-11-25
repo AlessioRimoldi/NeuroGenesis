@@ -1,6 +1,7 @@
 package neurogenesis.mc;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
 import org.jspecify.annotations.Nullable;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import neurogenesis.mc.net.ControlServer;
 import neurogenesis.mc.sim.EpisodeManager;
 import neurogenesis.mc.sim.Lockstep;
+import neurogenesis.mc.world.NgCommand;
 
 /** Common entrypoint: runs on the dedicated server and (in M2) inside a client's integrated server. */
 public class NeuroGenesisMod implements ModInitializer {
@@ -33,6 +35,7 @@ public class NeuroGenesisMod implements ModInitializer {
 			EpisodeManager em = new EpisodeManager(server);
 			episodes = em;
 			Lockstep ls = new Lockstep(server, em);
+			ls.setPace(config.pace());
 			lockstep = ls;
 			ControlServer cs = new ControlServer(config, ls);
 			controlServer = cs;
@@ -47,12 +50,18 @@ public class NeuroGenesisMod implements ModInitializer {
 			lockstep = null;
 			episodes = null;
 		});
+		CommandRegistrationCallback.EVENT.register((dispatcher, context, selection) -> NgCommand.register(dispatcher));
 		ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resources, success) -> {
 			EpisodeManager em = episodes;
 			if (em != null && success) {
 				server.execute(em::invalidateRecipes);
 			}
 		});
+	}
+
+	/** The episode manager for this server, or null if control is disabled or not started yet. */
+	public static @Nullable EpisodeManager episodesFor(MinecraftServer server) {
+		return lockstepFor(server) != null ? episodes : null;
 	}
 
 	/** The lockstep controller for this server, or null if control is disabled or not started yet. */

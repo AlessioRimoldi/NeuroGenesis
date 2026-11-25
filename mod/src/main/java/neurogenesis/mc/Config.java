@@ -3,7 +3,7 @@ package neurogenesis.mc;
 /**
  * Runtime configuration, read from system properties (-Dneurogenesis.*) first, then environment variables (NG_*).
  */
-public record Config(String bindAddress, int port, boolean controlEnabled) {
+public record Config(String bindAddress, int port, boolean controlEnabled, double pace) {
 	public static final int DEFAULT_PORT = 25570;
 
 	public static Config load() {
@@ -12,7 +12,9 @@ public record Config(String bindAddress, int port, boolean controlEnabled) {
 		// Fabric's GameTest runner sets this property; tests drive agents directly, without the socket.
 		boolean gameTest = System.getProperty("fabric-api.gametest") != null;
 		boolean enabled = !gameTest && Boolean.parseBoolean(get("neurogenesis.control", "NG_CONTROL", "true"));
-		return new Config(bind, port, enabled);
+		// Ticks per second under lockstep (0 = unlimited); changeable at runtime with /ng pace.
+		double pace = Double.parseDouble(get("neurogenesis.pace", "NG_PACE", "0"));
+		return new Config(bind, port, enabled, pace);
 	}
 
 	private static String get(String property, String env, String fallback) {

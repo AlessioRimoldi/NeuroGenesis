@@ -34,6 +34,8 @@ public final class Lockstep {
 
 	private volatile boolean active;
 	private volatile boolean waiting;
+	private volatile double pace; // ticks per second under lockstep; 0 = as fast as Python steps
+	private long lastTickTargetNanos;
 
 	// Server-thread state.
 	private ControlConnection session;
@@ -79,6 +81,19 @@ public final class Lockstep {
 
 	public MinecraftServer server() {
 		return server;
+	}
+
+	/** Limits lockstep to {@code ticksPerSecond} (0 = unlimited), e.g. 20 to watch agents in real time. */
+	public void setPace(double ticksPerSecond) {
+		pace = Math.max(0.0, ticksPerSecond);
+	}
+
+	public double pace() {
+		return pace;
+	}
+
+	public boolean hasSession() {
+		return active;
 	}
 
 	/** Park while idle at the barrier; wake-ups come from {@code server.execute} unparking the thread. */
@@ -235,12 +250,21 @@ public final class Lockstep {
 			.setError(Error.newBuilder().setCode(code).setMessage(message == null ? "" : message)));
 	}
 
-	/** Lets vanilla start the next tick without waiting for the 50 ms tick slot. */
+	/**
+	 * Lets vanilla start the next tick without waiting for the 50 ms tick slot, or, with a pace set, no earlier than
+	 * one pace interval after the previous tick (vanilla then waits, still serving tasks). No catch-up bursts.
+	 */
 	private void runNextTickImmediately() {
 		long now = Util.getNanos();
+		long next = now;
+		double tps = pace;
+		if (tps > 0) {
+			next = Math.max(now, lastTickTargetNanos + (long) (1_000_000_000L / tps));
+		}
+		lastTickTargetNanos = next;
 		MinecraftServerAccessor accessor = (MinecraftServerAccessor) server;
-		accessor.ng$setNextTickTimeNanos(now);
-		accessor.ng$setDelayedTasksMaxNextTickTimeNanos(now);
+		accessor.ng$setNextTickTimeNanos(next);
+		accessor.ng$setDelayedTasksMaxNextTickTimeNanos(next);
 	}
 
 	/** The watchdog compares wall time with the next-tick deadline; keep the deadline current while paused. */

@@ -3,7 +3,7 @@ PY ?= python
 PYTEST = PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 $(PY) -m pytest
 COMPOSE = docker compose -f docker/mc/compose.yaml
 
-.PHONY: help mod proto dev-server up down logs py test itest bench clean
+.PHONY: help mod proto dev-server up down logs py test itest bench watch clean
 
 help:
 	@echo "mod         build the Fabric mod (mod/build/dist/neurogenesis-*.jar) and run its unit tests"
@@ -14,6 +14,7 @@ help:
 	@echo "test        unit tests (Java + Python)"
 	@echo "itest       integration tests against a running server (dev-server or up)"
 	@echo "bench       lockstep throughput benchmark against a running server"
+	@echo "watch       run smell-following agents at real-time speed (watch with a 26.3 client)"
 
 mod:
 	cd mod && ./gradlew build
@@ -47,6 +48,9 @@ itest:
 
 bench:
 	$(PY) scripts/bench_steps.py
+
+watch:
+	$(PY) scripts/watch.py --agents 3
 
 clean:
 	cd mod && ./gradlew clean
