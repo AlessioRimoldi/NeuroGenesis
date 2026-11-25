@@ -28,7 +28,9 @@ dev-server:
 up: mod
 	$(COMPOSE) up -d
 	@echo "Waiting for the control port..."
-	@$(PY) -c "from neurogenesis.mc import McClient; McClient(connect_timeout=300).close()" && echo "Server ready."
+	@python3 -c "import socket, time; d = time.time() + 300; \
+		exec('while True:\n try:\n  socket.create_connection((\"127.0.0.1\", 25570), 2).close(); break\n except OSError:\n  assert time.time() < d, \"timed out\"; time.sleep(1)')" \
+		&& echo "Server ready."
 
 down:
 	$(COMPOSE) down
